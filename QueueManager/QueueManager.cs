@@ -8,7 +8,7 @@ namespace QueueManager
     /// <summary>
     /// Main class used to manage queues.
     /// </summary>
-    class QueueManager
+    public class QueueManager
     {
         /// <summary>
         /// A Dictionary that holds the actual queues which will be managed.

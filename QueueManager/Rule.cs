@@ -7,7 +7,7 @@ namespace QueueManager
     /// <summary>
     /// The class for rules which determine the priority of each Queue.
     /// </summary>
-    class Rule
+    public class Rule
     {
         /// <summary>
         /// The priority that is associated with the rule.  Determines the order in which rules are executed.
