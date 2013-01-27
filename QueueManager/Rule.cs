@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace QueueManager
 {
     /// <summary>
-    /// The base class for rules which determine the priority of each Queue.
+    /// The class for rules which determine the priority of each Queue.
     /// </summary>
     class Rule
     {
@@ -26,6 +26,13 @@ namespace QueueManager
         /// </summary>
         public string QueueName = null;
 
+        /// <summary>
+        /// Constructor for the Rule.
+        /// </summary>
+        /// <param name="queueName">The name of the queue.</param>
+        /// <param name="value">The value that will be added to the queue.</param>
+        /// <param name="priority">The priority that the rule will have.</param>
+        /// <param name="isApplicable">The function that will be run to determine if the value will be added.</param>
         public Rule(string queueName, int value, RulePriority priority, Func<Dictionary<string, Queue<object>>, bool> isApplicable)
         {
             QueueName = queueName;
