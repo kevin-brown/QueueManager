@@ -7,8 +7,19 @@ namespace QueueManager
 {
     class QueueManager
     {
+        /// <summary>
+        /// A Dictionary that holds the actual queues which will be managed.
+        /// </summary>
         Dictionary<string, Queue<object>> Queues = new Dictionary<string, Queue<object>>();
+
+        /// <summary>
+        /// A Dictionary that holds the callbacks that will be executed for each queue.
+        /// </summary>
         Dictionary<string, Action<object, Action>> Callbacks = new Dictionary<string, Action<object, Action>>();
+
+        /// <summary>
+        /// A Dictionary that holds the timeouts for each queue.
+        /// </summary>
         Dictionary<string, int> Timeouts = new Dictionary<string, int>();
 
         /// <summary>
@@ -21,6 +32,9 @@ namespace QueueManager
         /// </summary>
         private bool IsRunning = false;
 
+        /// <summary>
+        /// The timer that will handle the timeout for the queue lock.
+        /// </summary>
         private Timer TimeoutTimer = new Timer();
 
         /// <summary>
@@ -274,21 +288,33 @@ namespace QueueManager
 
             if (IsRunning == true)
             {
-                IsRunning = false;
+                // Manually call the end callback
+
+                EndCallback();
             }
         }
 
+        /// <summary>
+        /// Start the timeout timer.
+        /// </summary>
+        /// <param name="timeout">The time until the timeout.</param>
         private void StartTimeoutTimer(int timeout)
         {
             TimeoutTimer.Interval = timeout;
             TimeoutTimer.Start();
         }
 
+        /// <summary>
+        /// Stop the timeout timer.
+        /// </summary>
         private void StopTimeoutTimer()
         {
             TimeoutTimer.Stop();
         }
 
+        /// <summary>
+        /// The callback for the timeout timer, which will manually call the end callback and remove the lock.
+        /// </summary>
         void TimeoutTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             // Manually call the end callback
