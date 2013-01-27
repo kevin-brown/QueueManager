@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Timers;
 
 namespace QueueManager
 {
@@ -22,6 +21,8 @@ namespace QueueManager
         /// </summary>
         private bool IsRunning = false;
 
+        private Timer TimeoutTimer = new Timer();
+
         /// <summary>
         /// The class constructor for the QueueManager.
         /// </summary>
@@ -32,6 +33,9 @@ namespace QueueManager
             Rules[RulePriority.High] = new List<Rule>();
             Rules[RulePriority.Medium] = new List<Rule>();
             Rules[RulePriority.Low] = new List<Rule>();
+
+            TimeoutTimer.Stop();
+            TimeoutTimer.Elapsed += TimeoutTimer_Elapsed;
         }
 
         /// <summary>
@@ -100,6 +104,14 @@ namespace QueueManager
                 {
                     return;
                 }
+
+                // Lock the queue
+
+                IsRunning = true;
+
+                // Start time timeout timer for the specific queue
+
+                StartTimeoutTimer(Timeouts[queueName]);
 
                 // Invoke the callback for the specific queue
 
@@ -244,7 +256,13 @@ namespace QueueManager
         /// </summary>
         private void EndCallback()
         {
+            // Tell the manager it is done processing
+
             IsRunning = false;
+
+            // Stop the timeout timer
+
+            StopTimeoutTimer();
         }
 
         /// <summary>
@@ -258,6 +276,24 @@ namespace QueueManager
             {
                 IsRunning = false;
             }
+        }
+
+        private void StartTimeoutTimer(int timeout)
+        {
+            TimeoutTimer.Interval = timeout;
+            TimeoutTimer.Start();
+        }
+
+        private void StopTimeoutTimer()
+        {
+            TimeoutTimer.Stop();
+        }
+
+        void TimeoutTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            // Manually call the end callback
+
+            EndCallback();
         }
     }
 }

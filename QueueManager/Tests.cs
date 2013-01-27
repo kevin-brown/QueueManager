@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace QueueManager
 {
@@ -15,7 +13,7 @@ namespace QueueManager
             // Initialize the queue manager with test data
 
             manager.AddRule(new Rule("test", 1, RulePriority.High, (queues) => { return true; }));
-            manager.AddRule(new Rule("test2", 2, RulePriority.High, (queues) => { if (queues["test2"].Count > 1) { return true; } return false; }));
+            manager.AddRule(new Rule("test2", 1, RulePriority.High, (queues) => { if (queues["test2"].Count > 1) { return true; } return false; }));
 
             // Add some test queues
 
