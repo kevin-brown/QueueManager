@@ -25,7 +25,7 @@ namespace QueueManager
         public string QueueName = null;
 
         /// <summary>
-        /// Constructor for the Rule.
+        /// Initialized the rule with all of the provided information set.
         /// </summary>
         /// <param name="queueName">The name of the queue.</param>
         /// <param name="value">The value that will be added to the queue.</param>

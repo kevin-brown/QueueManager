@@ -5,6 +5,9 @@ using System.Timers;
 
 namespace QueueManager
 {
+    /// <summary>
+    /// Main class used to manage queues.
+    /// </summary>
     class QueueManager
     {
         /// <summary>
@@ -37,10 +40,13 @@ namespace QueueManager
         /// </summary>
         private Timer TimeoutTimer = new Timer();
 
+        /// <summary>
+        /// String used to determine if the callback can unlock the queue.
+        /// </summary>
         private string TimeoutKey = "";
 
         /// <summary>
-        /// The class constructor for the QueueManager.
+        /// Initializes the QueueManager with three types of priorities and a stopped timeout timer.
         /// </summary>
         public QueueManager()
         {
@@ -286,6 +292,9 @@ namespace QueueManager
             }
         }
 
+        /// <summary>
+        /// Generates a random 8 character string that can be used to unlock the queue.
+        /// </summary>
         private void GenerateTimeoutKey()
         {
             string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
