@@ -15,7 +15,7 @@ namespace QueueManager
         /// <summary>
         /// A Dictionary that holds the callbacks that will be executed for each queue.
         /// </summary>
-        Dictionary<string, Action<object, Action>> Callbacks = new Dictionary<string, Action<object, Action>>();
+        Dictionary<string, Action<string, object, Action<string>>> Callbacks = new Dictionary<string, Action<string, object, Action<string>>>();
 
         /// <summary>
         /// A Dictionary that holds the timeouts for each queue.
@@ -36,6 +36,8 @@ namespace QueueManager
         /// The timer that will handle the timeout for the queue lock.
         /// </summary>
         private Timer TimeoutTimer = new Timer();
+
+        private string TimeoutKey = "";
 
         /// <summary>
         /// The class constructor for the QueueManager.
@@ -70,7 +72,7 @@ namespace QueueManager
         /// <param name="name">The name of the Queue.</param>
         /// <param name="callback">The callback that will be called when the queue is executed.</param>
         /// <param name="timeout">The amount of time the QueueManager will wait before it continues.</param>
-        public void AddQueue(string name, Action<object, Action> callback, int timeout)
+        public void AddQueue(string name, Action<string, object, Action<string>> callback, int timeout)
         {
             // Add the necessary data to the dictionaries
 
@@ -129,7 +131,7 @@ namespace QueueManager
 
                 // Invoke the callback for the specific queue
 
-                Callbacks[queueName](queue.Dequeue(), EndCallback);
+                Callbacks[queueName](TimeoutKey, queue.Dequeue(), EndCallback);
             }
         }
 
@@ -268,15 +270,34 @@ namespace QueueManager
         /// <summary>
         /// The callback that should be called when a queue is done processing its item.
         /// </summary>
-        private void EndCallback()
+        private void EndCallback(string key)
         {
-            // Tell the manager it is done processing
+            // Make sure the key matches the current timeout
 
-            IsRunning = false;
+            if (key == TimeoutKey)
+            {
+                // Tell the manager it is done processing
 
-            // Stop the timeout timer
+                IsRunning = false;
 
-            StopTimeoutTimer();
+                // Stop the timeout timer
+
+                StopTimeoutTimer();
+            }
+        }
+
+        private void GenerateTimeoutKey()
+        {
+            string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            char[] stringChars = new char[8];
+            Random random = new Random();
+
+            for (int i = 0; i < stringChars.Length; i++)
+            {
+                stringChars[i] = chars[random.Next(chars.Length)];
+            }
+
+            TimeoutKey = new String(stringChars);
         }
 
         /// <summary>
@@ -290,7 +311,7 @@ namespace QueueManager
             {
                 // Manually call the end callback
 
-                EndCallback();
+                EndCallback(TimeoutKey);
             }
         }
 
@@ -300,6 +321,8 @@ namespace QueueManager
         /// <param name="timeout">The time until the timeout.</param>
         private void StartTimeoutTimer(int timeout)
         {
+            GenerateTimeoutKey();
+
             TimeoutTimer.Interval = timeout;
             TimeoutTimer.Start();
         }
@@ -319,7 +342,7 @@ namespace QueueManager
         {
             // Manually call the end callback
 
-            EndCallback();
+            EndCallback(TimeoutKey);
         }
     }
 }

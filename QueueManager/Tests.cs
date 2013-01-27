@@ -38,13 +38,13 @@ namespace QueueManager
             Console.ReadLine();
         }
 
-        static void TestCallback(object item, Action callback)
+        static void TestCallback(string key, object item, Action<string> callback)
         {
             Console.WriteLine(item.ToString());
 
             if (callback != null)
             {
-                callback();
+                callback(key);
             }
         }
     }
