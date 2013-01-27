@@ -9,7 +9,7 @@ namespace QueueManager
     /// <summary>
     /// The base class for rules which determine the priority of each Queue.
     /// </summary>
-    abstract class Rule
+    class Rule
     {
         /// <summary>
         /// The priority that is associated with the rule.  Determines the order in which rules are executed.
@@ -26,11 +26,20 @@ namespace QueueManager
         /// </summary>
         public string QueueName = null;
 
+        public Rule(string queueName, int value, RulePriority priority, Func<Dictionary<string, Queue<object>>, bool> isApplicable)
+        {
+            QueueName = queueName;
+            Value = value;
+            Priority = priority;
+
+            IsApplicable = isApplicable;
+        }
+
         /// <summary>
         /// Determines if the Value will be applied to the queue.
         /// </summary>
         /// <param name="queues">The dictionary of queues that can be used in the rule.</param>
         /// <returns>True if the Value will be applied, False otherwise.</returns>
-        abstract public bool IsApplicable(Dictionary<String, Queue<object>> queues);
+        public Func<Dictionary<string, Queue<object>>, bool> IsApplicable = (queues) => { throw new NotImplementedException(); };
     }
 }

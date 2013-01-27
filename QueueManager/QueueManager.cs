@@ -154,19 +154,19 @@ namespace QueueManager
         {
             Dictionary<string, int> priorities = new Dictionary<string, int>();
 
+            // Initialize all queues with the same priority
+
+            foreach (KeyValuePair<string, Queue<object>> pair in Queues)
+            {
+                priorities.Add(pair.Key, 0);
+            }
+
             // Run through all high priority rules first
 
             foreach (Rule rule in Rules[priority])
             {
                 if (rule.IsApplicable(Queues))
                 {
-                    // Initialize the priority of the queue as 0 if it does not already exist
-
-                    if (!priorities.ContainsKey(rule.QueueName))
-                    {
-                        priorities.Add(rule.QueueName, 0);
-                    }
-
                     // Add the value of the rule to the queue
 
                     priorities[rule.QueueName] += rule.Value;
@@ -179,28 +179,33 @@ namespace QueueManager
 
             foreach (KeyValuePair<string, int> queue in priorities)
             {
-                // Set the first queue
+                // Skip the queue if it is empty
 
-                if (highestQueue == null)
+                if (Queues[queue.Key].Count > 0)
                 {
-                    highestQueue = queue.Key;
-                }
-                else
-                {
-                    // Check for a tie
+                    // Set the first queue
 
-                    if (queue.Value == priorities[highestQueue])
-                    {
-                        highestQueue = null;
-
-                        break;
-                    }
-
-                    // Check if the current queue has a higher value than the previous highest
-
-                    if (queue.Value > priorities[highestQueue])
+                    if (highestQueue == null)
                     {
                         highestQueue = queue.Key;
+                    }
+                    else
+                    {
+                        // Check for a tie
+
+                        if (queue.Value == priorities[highestQueue])
+                        {
+                            highestQueue = null;
+
+                            break;
+                        }
+
+                        // Check if the current queue has a higher value than the previous highest
+
+                        if (queue.Value > priorities[highestQueue])
+                        {
+                            highestQueue = queue.Key;
+                        }
                     }
                 }
             }

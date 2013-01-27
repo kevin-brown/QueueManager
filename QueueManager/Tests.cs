@@ -8,33 +8,33 @@ namespace QueueManager
 {
     class Tests
     {
-        class TestRule : Rule
-        {
-            public TestRule()
-            {
-                Priority = RulePriority.High;
-                Value = 1;
-                QueueName = "test";
-            }
-
-            public override bool IsApplicable(Dictionary<string, Queue<object>> queues)
-            {
-                return true;
-            }
-        }
-
         static void Main(string[] args)
         {
             QueueManager manager = new QueueManager();
 
             // Initialize the queue manager with test data
 
-            manager.AddRule(new TestRule());
+            manager.AddRule(new Rule("test", 1, RulePriority.High, (queues) => { return true; }));
+            manager.AddRule(new Rule("test2", 2, RulePriority.High, (queues) => { if (queues["test2"].Count > 1) { return true; } return false; }));
+
+            // Add some test queues
+
+            manager.AddQueue("test2", TestCallback, 1000);
             manager.AddQueue("test", TestCallback, 1000);
-            manager.AddItem("test", "test item");
+
+            // Add some test items
+
+            manager.AddItem("test", "test item 1");
+            manager.AddItem("test2", "test2 item 1");
+            manager.AddItem("test", "test item 2");
+            manager.AddItem("test2", "test2 item 2");
 
             // Test to make sure the callback works
 
+            manager.Continue();
+            manager.Continue();
+            manager.Continue();
+            manager.Continue();
             manager.Continue();
 
             Console.ReadLine();
