@@ -394,7 +394,7 @@ namespace QueueManager
         {
             // Manually call the end callback
 
-            EndCallback(TimeoutKey);
+            Restart();
         }
     }
 }
