@@ -45,6 +45,14 @@ namespace QueueManager
         /// </summary>
         private string TimeoutKey = "";
 
+        public event EventHandler QueuesEmpty;
+
+        public event EventHandler Restarted;
+
+        private bool QueuesEmptyFired = false;
+
+        private bool RestartedFired = false;
+
         /// <summary>
         /// Initializes the QueueManager with three types of priorities and a stopped timeout timer.
         /// </summary>
@@ -70,6 +78,10 @@ namespace QueueManager
             // Add the item to the specified queue
 
             Queues[name].Enqueue(item);
+
+            // Reset the QueuesEmpty event
+
+            QueuesEmptyFired = false;
         }
 
         /// <summary>
@@ -107,6 +119,10 @@ namespace QueueManager
 
             if (!IsRunning)
             {
+                // Reset the restarted event
+
+                RestartedFired = false;
+
                 // Get the name of the next queue to be processed
 
                 string queueName = DetermineNextQueue();
@@ -115,6 +131,22 @@ namespace QueueManager
 
                 if (queueName == null)
                 {
+                    // Check if the QueuesEmpty event has been fired
+
+                    if (!QueuesEmptyFired)
+                    {
+                        // Fire the QueuesEmpty event
+
+                        EventHandler handler = QueuesEmpty;
+
+                        if (handler != null)
+                        {
+                            handler(this, new EventArgs());
+                        }
+
+                        QueuesEmptyFired = true;
+                    }
+
                     return;
                 }
 
@@ -321,6 +353,17 @@ namespace QueueManager
                 // Manually call the end callback
 
                 EndCallback(TimeoutKey);
+
+                // Fire the restarted command
+
+                EventHandler handler = Restarted;
+
+                if (handler != null)
+                {
+                    handler(this, new EventArgs());
+                }
+
+                RestartedFired = true;
             }
         }
 
