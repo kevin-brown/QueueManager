@@ -45,12 +45,24 @@ namespace QueueManager
         /// </summary>
         private string TimeoutKey = "";
 
+        /// <summary>
+        /// Event fired when all queues are empty.  It is only fired once and is reset when an item is added to a queue.
+        /// </summary>
         public event EventHandler QueuesEmpty;
 
+        /// <summary>
+        /// Event fired when the working queue is restarted.  It can be fired one time for each object in the queue.
+        /// </summary>
         public event EventHandler Restarted;
 
+        /// <summary>
+        /// Flag to determine whether or not the QueuesEmpty event can be fired again.
+        /// </summary>
         private bool QueuesEmptyFired = false;
 
+        /// <summary>
+        /// Flag to determine whether or not the Restarted event can be fired again.
+        /// </summary>
         private bool RestartedFired = false;
 
         /// <summary>
